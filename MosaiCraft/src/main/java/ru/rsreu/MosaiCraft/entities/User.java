@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private String username;
 
     @Column
-    @Size(min = 6, max = 50, message = "Пароль должен быть от 6 до 50 символов")
+    @Size(min = 6, message = "Пароль должен быть от 6")
     @NotBlank(message = "Пароль обязателен")
     private String password;
 
