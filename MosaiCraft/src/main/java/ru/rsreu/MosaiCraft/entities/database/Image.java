@@ -1,4 +1,4 @@
-package ru.rsreu.MosaiCraft.entities;
+package ru.rsreu.MosaiCraft.entities.database;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")
@@ -33,5 +33,12 @@ public class Image {
     @Column
     private Double blue;
 
+    public Image(Template template, String imagePath, Double red, Double green, Double blue) {
+        this.template = template;
+        this.imagePath = imagePath;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+    }
 
 }

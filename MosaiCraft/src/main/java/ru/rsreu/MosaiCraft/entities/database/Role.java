@@ -1,4 +1,4 @@
-package ru.rsreu.MosaiCraft.entities;
+package ru.rsreu.MosaiCraft.entities.database;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
     @Id
-    private long id;
+    private Long id;
     private String name;
     @Transient
     @ManyToMany(mappedBy = "roles")
@@ -40,8 +40,5 @@ public class Role implements GrantedAuthority {
         this.users = new HashSet<>();
     }
 
-    public void addUser(User user) {
-        this.users.add(user);
-    }
 
 }

@@ -1,0 +1,58 @@
+<!-- src/main/resources/templates/user.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой кабинет — Фотомозаики</title>
+  <link rel="stylesheet" th:href="@{/style/main.css}">
+</head>
+<body>
+<nav class="navbar">
+  <a th:href="@{/}">Главная</a>
+  <a th:href="@{/mosaic/create}">Создать мозаику</a>
+  <a th:href="@{/user}">Мой кабинет</a>
+  <span>Привет, <span sec:authentication="name"></span>!</span>
+  <form th:action="@{/logout}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <button type="submit">Выход</button>
+  </form>
+</nav>
+
+<main class="container">
+  <h1>Личный кабинет</h1>
+
+  <section>
+    <h2>Галерея ваших мозаик</h2>
+    <div class="gallery">
+      <div th:each="mosaic : ${gallery}">
+        <a th:href="@{/mosaic/{id}(id=${mosaic.id})}">
+          <img th:src="@{${mosaic.thumbnailUrl}}" alt="mosaic-thumb">
+        </a>
+      </div>
+      <p th:if="${#lists.isEmpty(gallery)}">Пока нет ни одной мозаики.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ваши шаблоны</h2>
+    <ul>
+      <li th:each="tpl : ${templates}">
+        <a th:href="@{/templates/{id}(id=${tpl.id})}" th:text="${tpl.name}">Шаблон</a>
+      </li>
+      <li th:if="${#lists.isEmpty(templates)}">Нет загруженных шаблонов.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Альбомы</h2>
+    <ul>
+      <li th:each="alb : ${albums}">
+        <a th:href="@{/albums/{id}(id=${alb.id})}" th:text="${alb.name}">Альбом</a>
+      </li>
+      <li th:if="${#lists.isEmpty(albums)}">Альбомы отсутствуют.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

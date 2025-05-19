@@ -1,4 +1,4 @@
-package ru.rsreu.MosaiCraft.entities;
+package ru.rsreu.MosaiCraft.entities.database;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.List;
 public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,6 +32,10 @@ public class Album {
     @OneToMany(mappedBy = "album", orphanRemoval = false)
     private List<Mosaic> mosaics;
 
+    public Album(String name) {
+        this.name = name;
+    }
+
     public void addMosaic(Mosaic mosaic) {
         mosaic.setAlbum(this);
         mosaics.add(mosaic);
@@ -40,5 +44,7 @@ public class Album {
     public void removeMosaic(Mosaic mosaic) {
         mosaics.remove(mosaic);
     }
+
+
 
 }

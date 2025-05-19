@@ -1,14 +1,11 @@
 package ru.rsreu.MosaiCraft;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.rsreu.MosaiCraft.entities.*;
+import ru.rsreu.MosaiCraft.entities.database.*;
 import ru.rsreu.MosaiCraft.services.UserService;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @SpringBootTest

@@ -3,7 +3,7 @@ package ru.rsreu.MosaiCraft.utils;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import ru.rsreu.MosaiCraft.entities.*;
+import ru.rsreu.MosaiCraft.entities.database.*;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;

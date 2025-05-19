@@ -1,15 +1,11 @@
-package ru.rsreu.MosaiCraft.entities;
+package ru.rsreu.MosaiCraft.entities.database;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,7 +17,7 @@ import java.util.List;
 public class Template {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -52,6 +48,15 @@ public class Template {
 
     public void removeImage(Image image) {
         images.remove(image);
+    }
+
+    @Override
+    public String toString() {
+        return "Template{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                // Не включаем images и другие связанные сущности!
+                '}';
     }
 
 

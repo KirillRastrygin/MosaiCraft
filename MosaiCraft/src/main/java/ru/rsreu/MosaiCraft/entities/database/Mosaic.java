@@ -1,4 +1,4 @@
-package ru.rsreu.MosaiCraft.entities;
+package ru.rsreu.MosaiCraft.entities.database;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Mosaic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "album_id")
@@ -37,5 +37,10 @@ public class Mosaic {
     @CreationTimestamp  // Автоматически при создании
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    public Mosaic(String name, String mosaicPath) {
+        this.name = name;
+        this.mosaicPath = mosaicPath;
+    }
 
 }

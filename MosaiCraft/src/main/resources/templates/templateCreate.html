@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать шаблон</title>
+    <link rel="stylesheet" href="/style/template-create.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+<header class="header">
+    <nav class="navbar">
+        <a class="nav-link" href="/">Главная</a>
+        <a class="nav-link" href="/mosaic/create">Создать мозаику</a>
+        <a class="nav-link active" href="/template/create">Создать шаблон</a>
+        <a class="nav-link" href="/user">Мой кабинет</a>
+        <div class="user-info">
+            <span class="welcome">Привет, <span id="username">Пользователь</span>!</span>
+            <form id="logoutForm" action="/logout" method="post">
+                <input type="hidden" name="_csrf" id="csrfToken"/>
+                <button class="logout-btn" type="submit">Выход</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<main class="container">
+    <div class="form-container">
+        <h1 class="title">Создание нового шаблона</h1>
+        <p class="subtitle">Добавьте изображения для вашего шаблона</p>
+
+        <form id="templateForm" action="/template/create" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" id="csrfTokenInput"/>
+
+            <!-- Поле для названия шаблона -->
+            <div class="form-group">
+                <label class="form-label">Название шаблона</label>
+                <input type="text" id="templateName" name="name"
+                       class="form-input" placeholder="Введите название" required>
+            </div>
+
+            <!-- Область загрузки файлов -->
+            <div class="form-group">
+                <label class="form-label">Изображения для шаблона</label>
+
+                <div class="requirements">
+                    <p><strong>Требования к изображениям:</strong></p>
+                    <ul>
+                        <li>Только JPG/JPEG формат</li>
+                        <li>Максимальный размер файла: 50MB</li>
+                        <li>Минимальный размер: 100x100 пикселей</li>
+                        <li>Максимальное количество: 100 изображений</li>
+                    </ul>
+                </div>
+
+                <div class="upload-area">
+                    <input type="file" id="fileInput" name="images" multiple
+                           accept="image/jpeg, image/jpg" style="display: none;">
+                    <div class="drop-zone" id="dropZone">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Перетащите сюда изображения или кликните для выбора</p>
+                        <p class="hint">Поддерживаются только JPG/JPEG изображения</p>
+                    </div>
+                </div>
+
+                <div class="preview-container" id="previewContainer"></div>
+                <div class="file-counter">Загружено: <span id="fileCount">0</span>/100</div>
+            </div>
+
+            <button type="submit" class="submit-btn">Создать шаблон</button>
+        </form>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        document.getElementById('csrfToken').value = csrfToken;
+        document.getElementById('csrfTokenInput').value = csrfToken;
+
+        const username = "Пользователь"; // Здесь можно получить из localStorage или API
+        document.getElementById('username').textContent = username;
+
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const previewContainer = document.getElementById('previewContainer');
+        const fileCount = document.getElementById('fileCount');
+        const templateForm = document.getElementById('templateForm');
+
+        const croppedImages = [];
+
+        dropZone.addEventListener('click', function(e) {
+            if (e.target === dropZone || e.target.nodeName === 'P' || e.target.nodeName === 'svg') {
+                fileInput.click();
+            }
+        });
+
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', function() {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                handleFiles(this.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const maxFiles = 100;
+            const maxSize = 50 * 1024 * 1024; // 50MB
+            const currentCount = croppedImages.length;
+
+            if (currentCount + files.length > maxFiles) {
+                alert(`Максимальное количество файлов: ${maxFiles}. Вы можете загрузить еще ${maxFiles - currentCount}.`);
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                if (!file.type.match('image/jpeg')) {
+                    alert(`Файл "${file.name}" не является JPG изображением`);
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert(`Файл "${file.name}" слишком большой (макс. 50MB)`);
+                    return;
+                }
+
+                cropImageToSquare(file, function(croppedBlob) {
+                    croppedImages.push({
+                        name: file.name,
+                        blob: croppedBlob
+                    });
+
+                    createPreview(croppedBlob, file.name);
+                    updateFileCounter();
+                });
+            });
+        }
+
+        function cropImageToSquare(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const size = Math.min(img.width, img.height);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+
+                    const ctx = canvas.getContext('2d');
+                    const offsetX = (img.width - size) / 2;
+                    const offsetY = (img.height - size) / 2;
+                    ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+
+                    canvas.toBlob(function(blob) {
+                        callback(blob);
+                    }, 'image/jpeg', 0.95);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function createPreview(blob, fileName) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.dataset.filename = fileName;
+
+                previewItem.innerHTML = `
+                    <img src="${e.target.result}" alt="${fileName}">
+                    <div class="preview-info">
+                        <span>${fileName}</span>
+                        <button type="button" class="remove-btn">×</button>
+                    </div>
+                `;
+
+                previewContainer.appendChild(previewItem);
+
+                previewItem.querySelector('.remove-btn').addEventListener('click', function() {
+                    const index = croppedImages.findIndex(img => img.name === fileName);
+                    if (index !== -1) {
+                        croppedImages.splice(index, 1);
+                    }
+                    previewItem.remove();
+                    updateFileCounter();
+                });
+            };
+            reader.readAsDataURL(blob);
+        }
+
+        function updateFileCounter() {
+            fileCount.textContent = croppedImages.length;
+        }
+
+        templateForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('templateName').value);
+
+            croppedImages.forEach((img) => {
+                formData.append('images', img.blob, img.name);
+            });
+
+            formData.append('_csrf', csrfToken);
+
+            fetch(templateForm.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/template/success';
+                    } else {
+                        throw new Error('Ошибка загрузки');
+                    }
+                })
+                .catch(error => {
+                    alert('Ошибка при создании шаблона: ' + error.message);
+                });
+        });
+
+
+    });
+</script>
+</body>
+</html>

@@ -10,9 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.rsreu.MosaiCraft.dao.UserDao;
-import ru.rsreu.MosaiCraft.entities.Role;
-import ru.rsreu.MosaiCraft.entities.User;
+import org.springframework.transaction.annotation.Transactional;
+import ru.rsreu.MosaiCraft.entities.database.*;
 import ru.rsreu.MosaiCraft.repo.RoleRepository;
 import ru.rsreu.MosaiCraft.repo.UserRepository;
 
@@ -86,6 +85,81 @@ public class UserService implements UserDetailsService {
         return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
                 .setParameter("paramId", idMin).getResultList();
     }
+
+    @Transactional
+    public void addUserMosaic(Long userId, Mosaic mosaic) {
+        User user = userRepository.findById(userId).orElseThrow();
+        mosaic.setUser(user);
+        user.getMosaics().add(mosaic);
+    }
+
+    @Transactional
+    public void addUserTemplate(Long userId, Template template) {
+        User user = userRepository.findById(userId).orElseThrow();
+        template.setUser(user);
+        user.getTemplates().add(template);
+    }
+
+    @Transactional
+    // Методы для работы с мозаиками и альбомами
+    public List<Mosaic> getUserMosaics(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null ? user.getMosaics() : null;
+    }
+
+    @Transactional
+    public List<Album> getUserAlbums(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null ? user.getAlbums() : null;
+    }
+
+    @Transactional(readOnly = true)
+    public User findByIdWithMosaicsAndAlbums(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.getMosaics().size(); // Инициализируем ленивая загрузка
+            user.getAlbums().size();
+        }
+        return user;
+    }
+
+    @Transactional
+    public boolean deleteMosaicById(Long mosaicId, Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return false;
+
+        return user.getMosaics().removeIf(m -> m.getId().equals(mosaicId));
+    }
+
+    @Transactional
+    public boolean deleteUserTemplateById(Long templateId, Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return false;
+
+        return user.getTemplates().removeIf(t -> t.getId().equals(templateId));
+    }
+
+    @Transactional
+    public boolean deleteAlbumById(Long albumId, Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return false;
+
+        return user.getAlbums().removeIf(a -> a.getId().equals(albumId));
+    }
+
+    @Transactional
+    public boolean createAlbum(Long userId, Album album) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return false;
+
+        album.setUser(user);
+        user.getAlbums().add(album);
+        return true;
+    }
+
+
 }
+
+
 
 

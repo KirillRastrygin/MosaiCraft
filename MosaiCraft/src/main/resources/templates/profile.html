@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Профиль пользователя</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <style>
+    .gallery, .templates, .albums {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      background-color: #fdfdfd;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .card-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-around;
+    }
+    header {
+      background-color: #f2f2f2;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    .section-title {
+      margin-top: 30px;
+      font-size: 1.5em;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <a th:href="@{/}">Главная</a>
+    <a th:href="@{/create}">Создать мозаику</a>
+    <a th:href="@{/profile}">Профиль</a>
+  </div>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit">Выйти</button>
+  </form>
+</header>
+
+<main class="container">
+  <h1>Профиль пользователя</h1>
+  <p><strong>Имя:</strong> <span th:text="${user.username}">Имя</span></p>
+  <p><strong>Email:</strong> <span th:text="${user.email}">email@example.com</span></p>
+
+  <h2 class="section-title">Созданные мозаики</h2>
+  <div class="gallery">
+    <div class="card" th:each="mosaic : ${mosaics}">
+      <img th:src="@{'/images/' + ${mosaic.name}}" alt="Мозаика">
+      <div class="card-actions">
+        <a th:href="@{'/images/' + ${mosaic.name}}" target="_blank">Открыть</a>
+        <a th:href="@{'/profile/mosaic/download/' + ${mosaic.id}}">Скачать</a>
+        <form th:action="@{'/profile/mosaic/delete/' + ${mosaic.id}}" method="post" style="display:inline;">
+          <button type="submit">Удалить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Пользовательские шаблоны</h2>
+  <div class="templates">
+    <div class="card" th:each="template : ${templates}">
+      <p><strong>Название:</strong> <span th:text="${template.name}">Шаблон</span></p>
+      <div class="card-actions">
+        <a th:href="@{'/template/view/' + ${template.id}}">Посмотреть</a>
+        <a th:href="@{'/profile/template/download/' + ${template.id}}">Скачать</a>
+        <form th:action="@{'/profile/template/delete/' + ${template.id}}" method="post" style="display:inline;">
+          <button type="submit">Удалить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Альбомы</h2>
+  <div class="albums">
+    <div class="card" th:each="album : ${albums}">
+      <p><strong>Название:</strong> <span th:text="${album.name}">Альбом</span></p>
+      <div class="card-actions">
+        <a th:href="@{'/album/view/' + ${album.id}}">Посмотреть</a>
+        <a th:href="@{'/profile/album/download/' + ${album.id}}">Скачать</a>
+        <form th:action="@{'/profile/album/delete/' + ${album.id}}" method="post" style="display:inline;">
+          <button type="submit">Удалить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

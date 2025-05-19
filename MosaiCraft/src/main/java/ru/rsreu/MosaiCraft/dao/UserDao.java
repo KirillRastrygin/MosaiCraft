@@ -2,7 +2,7 @@ package ru.rsreu.MosaiCraft.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ru.rsreu.MosaiCraft.entities.User;
+import ru.rsreu.MosaiCraft.entities.database.User;
 import ru.rsreu.MosaiCraft.utils.HibernateSessionFactoryUtil;
 
 import java.util.List;

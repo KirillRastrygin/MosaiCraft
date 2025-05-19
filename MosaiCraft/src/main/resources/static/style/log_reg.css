@@ -1,0 +1,79 @@
+/* Общие стили для body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Контейнер для форм */
+.form-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Заголовок формы */
+.form-container h1 {
+    margin-bottom: 1.5rem;
+    color: #333333;
+    font-size: 2rem;
+}
+
+/* Стили для полей ввода */
+.form-container input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Стили для кнопки */
+.form-container button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для ссылок */
+.form-container a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.form-container a:hover {
+    text-decoration: underline;
+}
+
+.validation_error {
+    color: red;
+}
+
+/* Стили для текста под формой */
+.form-container p {
+    margin-top: 1rem;
+    color: #666666;
+    font-size: 0.9rem;
+}
