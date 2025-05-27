@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,9 +22,9 @@ public class Mosaic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "album_id")
-    private Album album;
+    @ManyToMany(mappedBy = "mosaics")
+    @Cascade({ org.hibernate.annotations.CascadeType.ALL })
+    private List<Album> albums;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

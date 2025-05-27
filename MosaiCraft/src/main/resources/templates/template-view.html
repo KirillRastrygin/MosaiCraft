@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="'Шаблон: ' + ${template.name}">Просмотр шаблона</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #ccc;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="'Шаблон: ' + ${template.name}">Название шаблона</h1>
+
+<div class="gallery">
+    <div th:each="image : ${images}" class="gallery-item">
+        <img th:src="'data:image/jpeg;base64,' + ${image}" alt="Изображение шаблона" />
+    </div>
+</div>
+
+<a th:href="@{'/profile'}" class="back-button">Назад в профиль</a>
+
+</body>
+</html>

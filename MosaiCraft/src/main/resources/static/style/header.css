@@ -1,0 +1,63 @@
+.header {
+    background: linear-gradient(90deg, #2c3e50, #34495e);
+    padding: 15px 30px;
+    border-bottom: 3px solid #1a252f;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: #ecf0f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.nav-link {
+    margin-right: 20px;
+    text-decoration: none;
+    color: rgba(236, 240, 241, 0.85);
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background-color: rgba(236, 240, 241, 0.15);
+}
+
+.nav-link.active {
+    color: #fff;
+    border-bottom: 3px solid #3498db; /* нежный синий акцент */
+    background-color: rgba(236, 240, 241, 0.10);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.logout-btn {
+    padding: 6px 14px;
+    background-color: transparent;
+    color: #ecf0f1;
+    border: 2px solid #ecf0f1;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    border-color: #ecf0f1;
+}

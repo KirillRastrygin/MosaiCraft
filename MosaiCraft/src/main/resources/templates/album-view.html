@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Альбом: ' + ${album.name}">Альбом</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .mosaic-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mosaic-item {
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .mosaic-item:hover {
+            transform: scale(1.02);
+        }
+
+        .mosaic-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .mosaic-name {
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #ccc;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="'Альбом: ' + ${album.name}">Название альбома</h1>
+
+<div class="mosaic-grid">
+    <div th:each="mosaic, iterStat : ${album.mosaics}" class="mosaic-item">
+        <img th:src="'data:image/jpeg;base64,' + ${images[iterStat.index]}" alt="Mosaic Image"/>
+        <div class="mosaic-name" th:text="${mosaic.name}">Название мозаики</div>
+    </div>
+</div>
+
+<a href="/profile" class="back-button">Назад в профиль</a>
+
+</body>
+</html>

@@ -1,11 +1,8 @@
 package ru.rsreu.MosaiCraft.entities.create_mosaic;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.rsreu.MosaiCraft.entities.database.Image;
-import ru.rsreu.MosaiCraft.entities.database.Template;
+import jakarta.validation.constraints.Size;
+import lombok.extern.slf4j.Slf4j;
 import ru.rsreu.MosaiCraft.entities.dto.ImageDTO;
-import ru.rsreu.MosaiCraft.services.TemplateService;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+@Slf4j
 public class MosaicCreator {
 
 
@@ -23,6 +21,7 @@ public class MosaicCreator {
     public BufferedImage mosaic(BufferedImage img, int tileSize, int minDistance,
                                        int mosaicSize, List<ImageDTO> templateImages) throws InterruptedException, IOException {
         long t0 = System.currentTimeMillis();
+        log.info("Создание фото-мозайки:");
 
         // Получаем соотношение мозайки к оригинальному изображению
         int mosaicSizeRatio = getMosaicSizeRatio(img, mosaicSize);
@@ -153,6 +152,7 @@ public class MosaicCreator {
             // Создание очереди с использованными картинками для минимального
             // расстояния между одинаковыми картинками
             Queue<String> usedImagesQueue = new LinkedList<>();
+
 
             // Проходим по всем координатам изображения с шагом равным размеру плитки.
             for (int y = 0, tileY = 0, i = 0; y < y2; y += (tileSize / mosaicSizeRatio), tileY += tileSize, i++) {

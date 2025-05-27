@@ -36,6 +36,9 @@ public class TemplateService {
         return templateFromDb.orElse(new Template());
     }
 
+
+
+
     public List<Template> allTemplates() {
         return templateRepository.findAll();
     }

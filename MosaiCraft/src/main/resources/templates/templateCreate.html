@@ -5,6 +5,7 @@
     <title>Создать шаблон</title>
     <link rel="stylesheet" href="/style/template-create.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style/header.css}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
@@ -14,9 +15,9 @@
         <a class="nav-link" href="/">Главная</a>
         <a class="nav-link" href="/mosaic/create">Создать мозаику</a>
         <a class="nav-link active" href="/template/create">Создать шаблон</a>
-        <a class="nav-link" href="/user">Мой кабинет</a>
+        <a class="nav-link" th:href="@{/album/create}">Создать альбом</a>
+        <a class="nav-link" href="/profile">Мой кабинет</a>
         <div class="user-info">
-            <span class="welcome">Привет, <span id="username">Пользователь</span>!</span>
             <form id="logoutForm" action="/logout" method="post">
                 <input type="hidden" name="_csrf" id="csrfToken"/>
                 <button class="logout-btn" type="submit">Выход</button>
@@ -83,8 +84,6 @@
         document.getElementById('csrfToken').value = csrfToken;
         document.getElementById('csrfTokenInput').value = csrfToken;
 
-        const username = "Пользователь"; // Здесь можно получить из localStorage или API
-        document.getElementById('username').textContent = username;
 
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
@@ -231,7 +230,7 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/template/success';
+                        window.location.href = '/profile';
                     } else {
                         throw new Error('Ошибка загрузки');
                     }

@@ -1,0 +1,163 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6; /* чуть меньше, чем раньше */
+}
+
+.container {
+    max-width: 1000px;
+    margin: 2rem auto; /* уменьшено */
+    padding: 20px 25px 30px 25px; /* чуть меньше padding */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: #2c3e50;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 2.4rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 2.5rem;
+}
+
+p {
+    font-size: 1.1rem;
+    margin-bottom: 1.4rem;
+    color: #555;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem; /* чуть меньше gap */
+    margin-top: 2.5rem;
+}
+
+.card {
+    background: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    background-color: #ddd;
+}
+
+.card-body {
+    padding: 1.2rem 1.5rem;
+    flex-grow: 1;
+}
+
+.card-body h3 {
+    margin-top: 0;
+    margin-bottom: 0.9rem;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.card-body p {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+section ul {
+    margin-top: 1.8rem;
+    padding-left: 1.3rem;
+    list-style-type: disc;
+    color: #444;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.btn, .btn-secondary {
+    display: inline-block;
+    padding: 0.9rem 2rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin: 0 0.5rem 1rem 0.5rem;
+}
+
+.btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+footer {
+    text-align: center;
+    padding: 1.2rem 0;
+    font-size: 0.95rem;
+    color: #777;
+    margin-top: 3rem;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 1.5rem 15px;
+        padding: 15px 15px 25px 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .card img {
+        height: 160px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+}

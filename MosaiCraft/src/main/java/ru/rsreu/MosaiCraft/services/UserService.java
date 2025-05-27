@@ -3,8 +3,10 @@ package ru.rsreu.MosaiCraft.services;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,12 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rsreu.MosaiCraft.entities.database.*;
-import ru.rsreu.MosaiCraft.repo.RoleRepository;
-import ru.rsreu.MosaiCraft.repo.UserRepository;
+import ru.rsreu.MosaiCraft.repo.*;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -30,6 +34,28 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepository;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    MosaicRepository mosaicRepository;
+    @Autowired
+    AlbumRepository albumRepository;
+    @Autowired
+    TemplateRepository templateRepository;
+
+    public long countUsers() {
+        return userRepository.count();
+    }
+
+    public long countMosaics() {
+        return mosaicRepository.count();
+    }
+
+    public long countTemplates() {
+        return templateRepository.count();
+    }
+
+    public long countAlbums() {
+        return albumRepository.count();
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -101,6 +127,13 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public void addUserAlbum(Long userId, Album album) {
+        User user = userRepository.findById(userId).orElseThrow();
+        album.setUser(user);
+        user.getAlbums().add(album);
+    }
+
+    @Transactional
     // Методы для работы с мозаиками и альбомами
     public List<Mosaic> getUserMosaics(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -124,11 +157,42 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public Mosaic findMosaicById(long id) {
+        return mosaicRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Мозаика не найдена"));
+    }
+
+    @Transactional
+    public void deleteMosaic(long userId, long mosaicId) {
+        // Проверяем, что мозаика принадлежит пользователю
+        Mosaic mosaic = findMosaicById(mosaicId);
+        if (mosaic.getUser().getId() != userId) {
+            throw new AccessDeniedException("Мозаика не принадлежит пользователю");
+        }
+
+        mosaicRepository.delete(mosaic);
+    }
+
+    @Transactional
     public boolean deleteMosaicById(Long mosaicId, Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) return false;
 
         return user.getMosaics().removeIf(m -> m.getId().equals(mosaicId));
+    }
+
+    @Transactional
+    public boolean changeRole(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(null);
+        if (user.getRoles().contains(roleRepository.findById(2L).orElseThrow(null))) {
+            user.getRoles().remove(roleRepository.findById(2L).orElseThrow(null));
+            user.getRoles().add(roleRepository.findById(1L).orElseThrow(null));
+            return false;
+        } else {
+            user.getRoles().remove(roleRepository.findById(1L).orElseThrow(null));
+            user.getRoles().add(roleRepository.findById(2L).orElseThrow(null));
+            return true;
+        }
     }
 
     @Transactional
@@ -139,22 +203,13 @@ public class UserService implements UserDetailsService {
         return user.getTemplates().removeIf(t -> t.getId().equals(templateId));
     }
 
-    @Transactional
-    public boolean deleteAlbumById(Long albumId, Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return false;
-
-        return user.getAlbums().removeIf(a -> a.getId().equals(albumId));
+    public Album findAlbumById(Long id) {
+        return albumRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Альбом с ID " + id + " не найден"));
     }
 
-    @Transactional
-    public boolean createAlbum(Long userId, Album album) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return false;
-
-        album.setUser(user);
-        user.getAlbums().add(album);
-        return true;
+    public void deleteAlbumById(Long id) {
+        albumRepository.deleteById(id);
     }
 
 

@@ -1,21 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Создать фотомозаику</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/style/mosaic_create.css}">
+    <link rel="stylesheet" th:href="@{/style/header.css}">
+    <link rel="stylesheet" th:href="@{/style/mosaic_create.css}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
+
 <body>
 <header class="header">
     <nav class="navbar">
-        <a class="nav-link" th:href="@{/}">Главная</a>
-        <a class="nav-link active" th:href="@{/mosaic/create}">Создать мозаику</a>
-        <a class="nav-link" th:href="@{/user}">Мой кабинет</a>
+        <a class="nav-link" href="/">Главная</a>
+        <a class="nav-link active" href="/mosaic/create">Создать мозаику</a>
+        <a class="nav-link" href="/template/create">Создать шаблон</a>
+        <a class="nav-link" th:href="@{/album/create}">Создать альбом</a>
+        <a class="nav-link" href="/profile">Мой кабинет</a>
         <div class="user-info">
-            <span class="welcome">Привет, <span sec:authentication="name"></span>!</span>
-            <form th:action="@{/logout}" method="post">
+            <form id="logoutForm" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <button class="logout-btn" type="submit">Выход</button>
             </form>
@@ -23,112 +27,113 @@
     </nav>
 </header>
 
-<main class="container">
-    <div class="form-container">
-        <h1 class="title">Создание фото‑мозаики</h1>
-        <p class="subtitle">Выберите изображение и настройте параметры</p>
+<main class="main-content">
+    <section class="form-section">
+        <h1 class="page-title">Создание фотомозаики</h1>
+        <p class="page-subtitle">Выберите изображение и настройте параметры</p>
 
         <form th:action="@{/mosaic/create}" th:object="${mosaicForm}"
-              method="post" enctype="multipart/form-data" class="mosaic-form">
+              method="post" enctype="multipart/form-data" class="form">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-            <!-- Сообщения об ошибках и успехе -->
+            <!-- Сообщения -->
             <div th:if="${#fields.hasErrors('*')}" class="alert alert-error">
                 <p>Пожалуйста, исправьте ошибки в форме.</p>
             </div>
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
-            <!-- Блок загрузки изображения -->
-            <div class="upload-section">
-                <label class="upload-label">
-                    <input type="file" th:field="*{inputImage}" class="file-input" accept="image/*"/>
-                    <div class="error" th:if="${#fields.hasErrors('inputImage')}" th:errors="*{inputImage}"></div>
+            <!-- Загрузка изображения -->
+            <div class="form-group image-upload-group">
+                <label class="upload-label" for="fileInput">
+                    <input type="file" id="fileInput" th:field="*{inputImage}" class="file-input" accept="image/*"/>
                     <div class="image-preview" id="imagePreview">
                         <div class="placeholder">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                 fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                            <span>Выберите изображение</span>
+                            <span>Нажмите, чтобы выбрать изображение</span>
                         </div>
                         <img id="previewImage" class="preview-image" style="display: none;"/>
                     </div>
                 </label>
+                <div class="error" th:if="${#fields.hasErrors('inputImage')}" th:errors="*{inputImage}"></div>
             </div>
 
-            <!-- Блок настроек -->
-            <div class="settings-section">
+            <!-- Название и шаблон -->
+            <div class="form-group">
+                <label class="form-label">Название мозаики</label>
+                <input type="text" th:field="*{name}" maxlength="120" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Выберите шаблон</label>
+                <select th:field="*{template}" class="form-select">
+                    <option th:each="tpl : ${availableTemplates}" th:value="${tpl.id}" th:text="${tpl.name}"></option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('template')}" th:errors="*{template}"></div>
+            </div>
+
+            <!-- Настройки -->
+            <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Назовите мозайку</label>
-                    <input type="text" th:field="*{name}"  max="120">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Выберите шаблон</label>
-                    <select th:field="*{template}" class="form-select">
-                        <option th:each="tpl : ${availableTemplates}"
-                                th:value="${tpl.id}"
-                                th:text="${tpl.name}"></option>
-                    </select>
-                    <div class="error" th:if="${#fields.hasErrors('template')}" th:errors="*{template}"></div>
-                </div>
-
-                <a class="create--template-link" th:href="@{/template/create}">Создать шаблон</a>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Размер элемента (пиксели)</label>
-                        <input type="range" th:field="*{tileSize}" min="5" max="120" step="1" class="form-range"
-                               oninput="this.nextElementSibling.value = this.value">
-                        <output class="range-value" th:text="*{tileSize}">50</output>
-                        <div class="error" th:if="${#fields.hasErrors('tileSize')}" th:errors="*{tileSize}"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Минимальное расстояние между одинаковыми</label>
-                        <input type="range" th:field="*{minDistance}" min="1" max="10" step="1" class="form-range"
-                               oninput="this.nextElementSibling.value = this.value">
-                        <output class="range-value" th:text="*{minDistance}">3</output>
-                        <div class="error" th:if="${#fields.hasErrors('minDistance')}" th:errors="*{minDistance}"></div>
-                    </div>
+                    <label class="form-label">Размер элемента (пиксели)</label>
+                    <input type="range" th:field="*{tileSize}" min="5" max="120" step="1" class="form-range"
+                           oninput="this.nextElementSibling.value = this.value">
+                    <output class="range-value" th:text="*{tileSize}">50</output>
+                    <div class="error" th:if="${#fields.hasErrors('tileSize')}" th:errors="*{tileSize}"></div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Разрешение итогового изображения</label>
-                    <select th:field="*{mosaicSize}" class="form-select">
-                        <option th:each="opt : ${mosaicSizes}"
-                                th:value="${opt.value}"
-                                th:text="${opt.label}"></option>
-                    </select>
-                    <div class="error" th:if="${#fields.hasErrors('mosaicSize')}" th:errors="*{mosaicSize}"></div>
+                    <label class="form-label">Минимальное расстояние</label>
+                    <input type="range" th:field="*{minDistance}" min="1" max="10" step="1" class="form-range"
+                           oninput="this.nextElementSibling.value = this.value">
+                    <output class="range-value" th:text="*{minDistance}">3</output>
+                    <div class="error" th:if="${#fields.hasErrors('minDistance')}" th:errors="*{minDistance}"></div>
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">Создать мозаику</button>
+            <div class="form-group">
+                <label class="form-label">Разрешение</label>
+                <select th:field="*{mosaicSize}" class="form-select">
+                    <option th:each="opt : ${mosaicSizes}" th:value="${opt.value}" th:text="${opt.label}"></option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('mosaicSize')}" th:errors="*{mosaicSize}"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать мозаику</button>
+            </div>
         </form>
-    </div>
+    </section>
 </main>
 
 <script>
-    // Превью загруженного изображения
-    const fileInput = document.querySelector('.file-input');
+    const fileInput = document.getElementById('fileInput');
     const previewContainer = document.getElementById('imagePreview');
     const previewImage = document.getElementById('previewImage');
     const placeholder = previewContainer.querySelector('.placeholder');
 
-    fileInput.addEventListener('change', function() {
+    placeholder.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function () {
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.addEventListener('load', function() {
+            reader.onload = function () {
                 previewImage.style.display = 'block';
-                previewImage.setAttribute('src', this.result);
+                previewImage.src = reader.result;
                 placeholder.style.display = 'none';
-            });
+            };
             reader.readAsDataURL(file);
         } else {
             previewImage.style.display = 'none';
-            previewImage.removeAttribute('src');
+            previewImage.src = '';
             placeholder.style.display = 'flex';
         }
     });

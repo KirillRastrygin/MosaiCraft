@@ -18,7 +18,7 @@ public class CommonTemplateCreate {
 
     @Test
     public void createCommonTemplate() {
-        templateStorageManager.readCommonTemplate("картины");
+        templateStorageManager.readCommonTemplate("цветы");
 
     }
 

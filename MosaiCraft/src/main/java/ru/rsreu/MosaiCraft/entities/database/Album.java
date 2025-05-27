@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -29,15 +30,15 @@ public class Album {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "album", orphanRemoval = false)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Mosaic> mosaics;
 
     public Album(String name) {
         this.name = name;
+        mosaics = new ArrayList<>();
     }
 
     public void addMosaic(Mosaic mosaic) {
-        mosaic.setAlbum(this);
         mosaics.add(mosaic);
     }
 

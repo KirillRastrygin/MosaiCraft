@@ -1,35 +1,39 @@
 package ru.rsreu.MosaiCraft.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.rsreu.MosaiCraft.services.UserService;
 
+@Controller
+@RequestMapping("/admin")
 public class AdminController {
+
     @Autowired
     private UserService userService;
 
-    @GetMapping("/admin")
+    @GetMapping
     public String userList(Model model) {
         model.addAttribute("allUsers", userService.allUsers());
+        model.addAttribute("userCount", userService.countUsers());
+        model.addAttribute("mosaicCount", userService.countMosaics());
+        model.addAttribute("templateCount", userService.countTemplates());
+        model.addAttribute("albumCount", userService.countAlbums());
         return "admin";
     }
 
-    @PostMapping("/admin")
-    public String  deleteUser(@RequestParam(required = true, defaultValue = "" ) Long userId,
-                              @RequestParam(required = true, defaultValue = "" ) String action,
-                              Model model) {
-        if (action.equals("delete")){
-            userService.deleteUser(userId);
+    @PostMapping
+    public String manageUser(@RequestParam Long userId, @RequestParam String action) {
+        switch (action) {
+            case "delete" -> userService.deleteUser(userId);
+            case "changeRole" -> userService.changeRole(userId);
         }
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/gt/{userId}")
-    public String  gtUser(@PathVariable("userId") Long userId, Model model) {
+    @GetMapping("/gt/{userId}")
+    public String gtUser(@PathVariable Long userId, Model model) {
         model.addAttribute("allUsers", userService.usergtList(userId));
         return "admin";
     }

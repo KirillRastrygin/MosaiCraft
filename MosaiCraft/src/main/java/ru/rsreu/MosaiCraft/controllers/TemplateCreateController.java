@@ -119,6 +119,6 @@ public class TemplateCreateController {
 
         userService.updateUser(user);
 
-        return "redirect:/success";
+        return "redirect:/profile";
     }
 }

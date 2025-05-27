@@ -30,8 +30,6 @@ public class RegistrationController {
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("userForm") @Valid User userForm, Errors errors, Model model) {
 
-        log.info("Ало");
-
 
         if (errors.hasErrors()) {
             return "registration";

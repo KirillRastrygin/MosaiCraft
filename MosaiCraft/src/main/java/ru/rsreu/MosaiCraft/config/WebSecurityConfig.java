@@ -26,14 +26,16 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/news").hasRole("USER")
                         .requestMatchers("/", "/resources/**").permitAll()
+                        .requestMatchers("/resources/static/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .permitAll()
                         .logoutSuccessUrl("/")
                 );
