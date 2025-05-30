@@ -68,10 +68,6 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User findUserById(Long userId) {
-        Optional<User> userFromDb = userRepository.findById(userId);
-        return userFromDb.orElse(new User());
-    }
 
     public List<User> allUsers() {
         return userRepository.findAll();
@@ -133,19 +129,6 @@ public class UserService implements UserDetailsService {
         user.getAlbums().add(album);
     }
 
-    @Transactional
-    // Методы для работы с мозаиками и альбомами
-    public List<Mosaic> getUserMosaics(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        return user != null ? user.getMosaics() : null;
-    }
-
-    @Transactional
-    public List<Album> getUserAlbums(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        return user != null ? user.getAlbums() : null;
-    }
-
     @Transactional(readOnly = true)
     public User findByIdWithMosaicsAndAlbums(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -173,13 +156,6 @@ public class UserService implements UserDetailsService {
         mosaicRepository.delete(mosaic);
     }
 
-    @Transactional
-    public boolean deleteMosaicById(Long mosaicId, Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return false;
-
-        return user.getMosaics().removeIf(m -> m.getId().equals(mosaicId));
-    }
 
     @Transactional
     public boolean changeRole(Long userId) {
@@ -193,14 +169,6 @@ public class UserService implements UserDetailsService {
             user.getRoles().add(roleRepository.findById(2L).orElseThrow(null));
             return true;
         }
-    }
-
-    @Transactional
-    public boolean deleteUserTemplateById(Long templateId, Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return false;
-
-        return user.getTemplates().removeIf(t -> t.getId().equals(templateId));
     }
 
     public Album findAlbumById(Long id) {
