@@ -26,7 +26,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/news").hasRole("USER")
                         .requestMatchers("/", "/resources/**").permitAll()
-                        .requestMatchers("/resources/static/images/**").permitAll()
+                        .requestMatchers("images/mosaic-creation.png").permitAll()
+                        .requestMatchers("images/mosaic-example.png").permitAll()
+                        .requestMatchers("images/mosaic-gallery.png").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
